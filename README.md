@@ -33,7 +33,7 @@ If the issue cannot be resolved or it is impacting a wider audiance, the ticket 
 **Environment**
 The issue could be related to connectivity in our hybrid architecture. The correct licenses must be assigned to the identity in order to access O365 services and activation.
 
-Microsoft admins can view the status of services and find out when maintenance is scheduled. Service health information is available at any time by signing in. If you're using Office 365 operated by 21Vianet, some of the information below might not apply. Instead, see the 21Vianet service level agreement.
+Microsoft admins can view the status of services and find out when maintenance is scheduled. Service health information is available at any time by signing in. 
 
 View status of services: The Service health section shows the current status of the service and details about service disruptions and outages. Planned maintenance information is available on the Message Center. For more information, see View the status of your services.
 
@@ -54,6 +54,62 @@ Years	Q1	Q2	Q3	Q4
 2019	99.97%	99.97%	99.98%	99.98%
 2018	99.99%	99.98%	99.97%	99.98%
 2017	99.99%	99.97%	99.98%	99.99%
+
+Notification policy: When a service incident occurs, Microsoft recognizes that timely, targeted, and accurate communications are critical for customers. Microsoft notifies administrators by communicating directly to impacted customers via Service health on the Microsoft 365 admin center. Service incident updates are provided on an hourly cadence or, if a different cadence is required, it will be stated in the SHD communication posting.
+
+Ensuring data availability: Microsoft ensures that customer data is available whenever it's needed through the following features: Data storage and redundancy, Data monitoring, and Completing preventative maintenance.
+
+Data storage and redundancy: Customer data is stored in a redundant environment with robust data protection capabilities to enable availability, business continuity, and rapid recovery. Multiple levels of data redundancy are implemented, ranging from redundant disks to guard against local disk failure to continuous, full data replication to a geographically diverse data center.
+
+Data monitoring: Microsoft services maintain high levels of performance by monitoring: Databases, Blocked processes, Packet loss, Queued processes, and Query latency.
+
+Technical support case handling: Microsoft assigns a severity level to a case when it is opened, based on an assessment of the issue type and customer impact. Examples of issue types and severity levels are shown in the following table.
+
+Severity level	Operations and support description	Examples
+Sev A (Critical)
+One or more services aren't accessible or are unusable. Production, operations, or deployment deadlines are severely affected, or there will be a severe impact on production or profitability. Multiple users or services are affected.
+Widespread problems sending or receiving mail.
+SharePoint site down.
+All users can't send instant messages, join or schedule Skype for Business Meetings, or make Skype for Business calls.
+Sev B (High)
+The service is usable but in an impaired fashion. The situation has moderate business impact and can be dealt with during business hours. A single user, customer, or service is partially affected.
+Send button in Outlook is garbled.
+Setting is impossible from EAC (Exchange Admin Center) but possible in PowerShell.
+Sev C (Non-critical)
+The situation has minimal business impact. The issue is important but doesn't have a significant current service or productivity impact for the customer. A single user is experiencing partial disruption, but an acceptable workaround exists.
+How to set user password that never expires.
+User can't delete contact information in Exchange Online.
+Technical support initial response times: Initial response time is based on the severity levels described above and the type of subscription. The response time objectives are described in the following table.
+
+Severity level	Microsoft 365 Business Basic1
+Microsoft 365 Apps for business1
+Microsoft 365 Business Standard1
+Microsoft 365 Business Premium1	All Microsoft 365 and Office 365 Enterprise (E),
+Frontline (F),
+Government (G), and
+Education (A) plans	Elevated support options3
+Sev A (Critical)
+Available: 24/74
+Response time: one hour
+Available: 24/74
+Response time: one hour
+Available: 24/74
+Response time: one hour
+Sev B (High)
+Available: business hours
+Response time: no commitment
+Available: 24/74
+Response time: next day
+Available: 24/74
+Response time: 2 hours
+Sev C (Medium)
+Available: business hours
+Response time: no commitment
+Available: 24/74
+Response time: no commitment
+Available: 24/74
+Response time: 4 hours
+
 
 **Service	Location**
 
