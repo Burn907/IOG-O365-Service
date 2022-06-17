@@ -1,5 +1,3 @@
-#Written by Craig Burnett Operations Manager LNRSG Service Delivery Level III Engineering
-
 # O365-Service-Engineering
 
 Service support information for providing O365 services for RSG
@@ -11,7 +9,20 @@ For legal purposes, the tenant is hosted in the East US region within Microsofts
 
 **Service Health**
 
+Monitor O365 Service Health from the service health blade in the Admin center 
+https://admin.microsoft.com/#/servicehealth
+
+Service degredation and advisories are listed here for each individual service within O365. Service degredations are also emailed to admins once Microsoft aknowledge an issue
+
+In addition to the O365 services, you can also monitor Windows release health in a seperate blade
+https://admin.microsoft.com/#/windowsreleasehealth
+
 **Service Support**
+
+All issues related to O365 must be report to the RSG Level I ServiceDesk/Helpdesk.
+
+Level 1 = 10 minute first time fix
+If the issues is not resolved within 10 minutes, the ticket is escalated to local Level II support
 
 How does Microsoft secure your data?
 
