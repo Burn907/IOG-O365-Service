@@ -81,13 +81,7 @@ How to set user password that never expires.
 User can't delete contact information in Exchange Online.
 Technical support initial response times: Initial response time is based on the severity levels described above and the type of subscription. The response time objectives are described in the following table.
 
-Severity level	Microsoft 365 Business Basic1
-Microsoft 365 Apps for business1
-Microsoft 365 Business Standard1
-Microsoft 365 Business Premium1	All Microsoft 365 and Office 365 Enterprise (E),
-Frontline (F),
-Government (G), and
-Education (A) plans	Elevated support options3
+
 Sev A (Critical)
 Available: 24/74
 Response time: one hour
@@ -95,6 +89,7 @@ Available: 24/74
 Response time: one hour
 Available: 24/74
 Response time: one hour
+
 Sev B (High)
 Available: business hours
 Response time: no commitment
@@ -102,6 +97,7 @@ Available: 24/74
 Response time: next day
 Available: 24/74
 Response time: 2 hours
+
 Sev C (Medium)
 Available: business hours
 Response time: no commitment
