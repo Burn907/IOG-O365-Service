@@ -9,7 +9,7 @@ For legal purposes, the tenant is hosted in the East US region within Microsofts
 
 **Service Health**
 
-Monitor O365 Service Health from the service health blade in the Admin center 
+Monitor O365 Service Health from the service health blade in the Admin center
 https://admin.microsoft.com/#/servicehealth
 
 Service degredation and advisories are listed here for each individual service within O365. Service degredations are also emailed to admins once Microsoft aknowledge an issue
@@ -21,18 +21,17 @@ https://admin.microsoft.com/#/windowsreleasehealth
 
 All issues related to O365 must be report to the RSG Level I ServiceDesk/Helpdesk.
 
-Level I = 10 minute first time fix
+**Level I** = 10 minute first time fix
 Issue is logged into Topdesk and the analyst will collect details of the issue from the caller and attempt to resolve if it is a local issue.
 If the issue is not resolved within 10 minutes, the ticket is escalated to local Level II support
 
-Level II = Will pickup ticket from Topdesk and contact the caller. All attempts will be made to resolve if the problem is an isolated client side issue.
+**Level II** = Will pickup ticket from Topdesk and contact the caller. All attempts will be made to resolve if the problem is an isolated client side issue.
 If the issue cannot be resolved or it is impacting a wider audiance, the ticket will be escalated to Level III O365 Administration
 
-Level III = O365 Admininistration will pickup the ticket and looks to resolve accordingly. Incidents that are impacting RSG on a wide scale will either be environment related or Microsoft service degredation.
+**Level III** = O365 Admininistration will pickup the ticket and looks to resolve accordingly. Incidents that are impacting RSG on a wide scale will either be environment related or Microsoft service degredation.
 
 **Environment**
-The issue could be related to connectivity in our hybrid architecture. The correct licenses must be assigned to the identity in order to access O365 services and activation. 
-
+The issue could be related to connectivity in our hybrid architecture. The correct licenses must be assigned to the identity in order to access O365 services and activation.
 
 Microsoft admins can view the status of services and find out when maintenance is scheduled. Service health information is available at any time by signing in. If you're using Office 365 operated by 21Vianet, some of the information below might not apply. Instead, see the 21Vianet service level agreement.
 
@@ -49,7 +48,7 @@ Unplanned downtime: Unplanned service incidents occur when one of the services i
 Recent worldwide uptimes: Moving to a cloud service shouldn't mean losing the ability to know what's going on. With Microsoft 365, it doesn't. We aim to be transparent in our operations so you can monitor the state of your service, track issues, and have a historical view of availability. The following tables show recent worldwide uptime data.
 
 Years	Q1	Q2	Q3	Q4
-2022				
+2022			
 2021	99.97%	99.98%	99.99%	99.98%
 2020	99.98%	99.99%	99.97%	99.97%
 2019	99.97%	99.97%	99.98%	99.98%
