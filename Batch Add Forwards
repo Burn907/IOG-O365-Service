@@ -1,0 +1,12 @@
+$batchname
+Adding forwards : 
+ 
+$BatchName | foreach {Set-Mailbox $_.username -ForwardingAddress $_.Contact}
+ 
+Removing forwards
+$BatchName | foreach {Set-Mailbox $_.username -ForwardingAddress $null}
+ 
+ 
+Check forwards : 
+$BatchName | foreach {get-Mailbox $_.username | Select Name, PrimarySMTPAddress, ForwardingAddress, DeliverToMailboxAndForward}
+

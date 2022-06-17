@@ -1,0 +1,2 @@
+How to find who has the rights currently? Run the following in the Shell to find out.
+Get-ManagamentRoleAssignment –Role “Mailbox Import Export” | fl RoleAssigneeName

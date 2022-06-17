@@ -1,0 +1,6 @@
+Set-MailboxAutoReplyConfiguration griffins1 -AutoReplyState Enabled -InternalMessage "I 'm out of the office" -ExternalMessage "I'm out of the office"
+ 
+ 
+Get-mailboxautoreplyconfiguration griffins1
+ 
+Set-mailboxautoreplyconfiguration griffins1 -autoreplystate disabled

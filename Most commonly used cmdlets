@@ -1,0 +1,142 @@
+	1. Start an Office 365 Powershell: (You need to run the below just once until you close the session)
+ Open up Windows Powershell with your a-acccount
+ 
+$LiveCred = Get-Credential jacobm@b2b.regn.net
+ 
+        -Type in your password on the prompt
+ 
+$Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://ps.outlook.com/powershell/ -Credential $LiveCred -Authentication Basic -AllowRedirection
+ 
+Import-PSSession $Session
+ 
+	2. To convert a User/Regular mailbox to a shared mailbox:
+ 
+get-mailbox -identity user@domain.com (Mailbox Name) | set-mailbox -type “Shared”
+ 
+	3. To convert a shared mailbox to a user mailbox (remember to assign a 365 license after conversion):
+ 
+   get-mailbox -identity user@domain.com (Mailbox Name) | set-mailbox -type “Regular”
+ 
+	4. To convert a user/regular mailbox to a room mailbox:
+   
+           get-mailbox -identity user@domain.com (Mailbox Name) | set-mailbox -type “Room”
+ 
+To get the permissions for a Mailbox:
+ 
+Get-Mailboxfolderpermissions  Mailbox Name/emailaddress
+ 
+To Add permissions for a calendar:
+ 
+Add-MailboxFolderPermission Display Name/email address of the Mailbox:\Calendar -User username -AccessRights  AccessRightsType
+ 
+PSL Meeting Rooms:
+ 
+PSL Meeting Rooms are set up differently as below:
+ 
+ 1. Users of the DL  RBIDLBankersAccuityUKSalesinclSalesSupport@reedelsevier.com  should have permission to see/read all items, but create, edit and read only their own items. 
+ 
+A security group called rbi-mbx-psl-mtg-authorfloor2@ReedElsevier.com has been created with Publishing Author rights to the Calendars. This sets the permissions as in 1.
+ 
+Add-MailboxFolderPermission Display Name/email address of the Mailbox:\Calendar -User AccessRights  rbi-mbx-psl-mtg-authorfloor2@ReedElsevier.com  AccessRightsType PublishingAuthor
+ 
+	2. The following additional individuals have full editorial access to read, create, edit and delete all items:
+McGregor, Susan (RBI) Susan.McGregor@Accuity.com 
+Jones, Emma (RBI)          emma.jones@Accuity.com 
+Shah, Khilna (RBI-UK)    Khilna.Shah@Accuity.com 
+Goldthorpe, John (RBI) john.goldthorpe@accuity.com 
+Facilities / PSL and RBI    RBI.Facilities.London@rbi.co.uk
+ 
+ 
+A security group called rbi-mbx-psl-mtg-pubeditorfloor2@ReedElsevier.com has been created with Publishing Author rights to the Calendars. This sets the permissions as on  2.
+ 
+Add-MailboxFolderPermission Display Name/email address of the Mailbox:\Calendar -User AccessRights   rbi-mbx-psl-mtg-pubeditorfloor2@ReedElsevier.com  AccessRightsType PublishingEditor
+ 
+The booking policy is set  to  rbi-mbx-psl-mtg-pubeditorfloor2@ReedElsevier.com.To set this:
+ 
+Set-CalendarProcessing fleetroompsl@rbi.co.uk -AutomateProcessing Autoaccept -BookInPolicy rbi-mbx-psl-mtg-pubeditorfloor2@reedelsevier.com
+ 
+To check the booking policies on meeting rooms:
+ 
+Get-CalendarProcessing Display Name/emailaddress of the Resource Mailbox | fl
+ 
+To view information about the total number of recipients in your organization – including number of mailboxes, active mailboxes, contacts, and distribution groups:
+ 
+Get-RecipientStatisticsReport
+ 
+To view the list of all the mailboxes in the organization:
+ 
+Get-Mailbox -ResultSize unlimited 
+ 
+You can also filter the above result just to view certain properties of the mailboxes like this and export this to a csv file :
+ 
+Get-MailboxStatistics | ft DisplayName, TotalItemSize, ItemCount | export -csv C:\EXPORT.csv
+ 
+To view just the usermailboxes and not the shared or other mailboxes:
+ 
+Get-mailbox -resultsize unlimited -Filter ‘ (recipienttypedetails -eq “Usermailbox”)’ | export-csv email-list.csv
+ 
+Add Send As permissions to the mailbox - allows a user to send as if they were the mailbox itself:
+ 
+Add-RecipientPermission -Identity “Name of the Mailbox”  -Trustee  “User Name of the person who needs to be able to Send As” -AccessRights SendAs -Confirm:$false
+ 
+To determine the database the user is in:
+ 
+Get-Mailbox -Identity username | fl database.
+ 
+To determine which server the user is in:
+ 
+Get-Mailbox -Identity username | fl  servername 
+ 
+To determine the server name , Alias and Quota size of a User Mailbox use:
+ 
+Get-Mailbox -Identity username 
+ 
+ To get a report of all Active Sync devices on Office 365:
+ 
+Get-MobileDevice | select devicetype, deviceos,DeviceMobileOperator ,DeviceImei, UserDisplayName ,Name |export-csv \AciveSyncDevices.csv
+ 
+More info on the different cmdlets can be found here :
+ 
+https://technet.microsoft.com/en-us/library/bb123685(v=exchg.160).aspx
+ 
+
+How to create a Mailbox in Office 365 for users with just a b2b account:
+ 
+To do the above open the On Premises Shell and type in the following command:
+ 
+Enable-RemoteMailbox username@b2b.regn.net -primarysmtpaddress  email address  -RemoteRoutingAddress  O365rbiuk-alias@reedelsevier.mail.onmicrosoft.com 
+ 
+How to get the list of all Distribution Group members exported to a csv?
+ 
+Get-DistributionGroupMember -identity "DL Name" | Export-Csv C:\MyFile.Csv 
+ 
+How to get the list of all Users to an AD Group exported to a csv?
+ 
+Get-ADGroupMember -Identity "RBI-UK-SECURITY-SPECOPS-Users" | select name | Export-Csv -path "C:\Users\jacobm\Specopsusers.csv" -NoTypeInformation
+ 
+Command to remove all Users from an AD group:
+ 
+Remove-ADGroupMember "Group Name" -Members (Get-ADGroupMember "Group Name") -Confirm:$false
+ 
+How to get a list of all AD memberships that a user belongs to?
+ 
+Get-ADPrincipalGroupMembership -Identity jacobm | export-csv C:\Users\jacobm\adgroupmembers.csv
+ 
+ To get a list of all hidden mailboxes in Office 365:
+ 
+Get-Mailbox -ResultSize Unlimited -Filter {HiddenFromAddressListsEnabled -eq $True} | Export-CSV "C:\Users\jacobm\Desktop\HiddenUsers.csv"
+ 
+To get a list of all hidden DL's in office 365:
+ 
+Get-DistributionGroup -ResultSize Unlimited -Filter {HiddenFromAddressListsEnabled -eq $True} | Export-CSV "C:\Users\jacobm\Desktop\HiddenUsers.csv"
+ 
+To get the SID of a logged in user:
+ 
+On the command prompt type whoami  /user
+ 
+ 
+ 
+ 
+ 
+ 
+

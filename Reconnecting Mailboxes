@@ -1,0 +1,12 @@
+On premise Powershell Commands
+ 
+Create AD account  
+ 
+Reconnecting mailboxes
+ 
+Mail enabling a Ad user 
+Enable-Mailuser -Identity "Payne, Marc (Ascend)" -PrimarySmtpAddress "name.surname@rbi.co.uk" -ExternalEmailAddress "O365rbiuk-(Alias)@reedelsevier.mail.onmicrosoft.com"
+ 
+Marking a user as RemoteMailbox
+Enable-RemoteMailbox -Identity "name.surname@rbi.co.uk
+ 

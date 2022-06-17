@@ -1,0 +1,44 @@
+#############################################################################################
+#
+# Script
+# Run in Office 365/Azure shell
+#
+# Script retrieves all RBI mailboxes and exports some values to csv file 
+#
+#############################################################################################
+ 
+$date = get-date -Format yyyy-MM-dd
+ 
+$file = "licenses-"+$date+".csv"
+$mbxall = "displayname;email;type;lithold;disabled;upn;usagelocation;islicensed"
+ 
+ 
+$mbs = Get-mailbox -filter 'emailaddresses -like "*o365rbi*" ' -resultsize unlimited
+ 
+$mbs | sort name | Foreach {
+ 
+$name        = $_.DisplayName
+$email        = $_.PrimarySmtpAddress
+$rectyp = $_.RecipientTypeDetails
+$liti        = $_.LitigationHoldEnabled
+$accdis = $_.AccountDisabled
+$upn        = $_.UserPrincipalName
+ 
+$msol        = Get-MsolUser -UserPrincipalName $upn
+$loc        = $msol.UsageLocation
+$lic        = $msol.IsLicensed
+ 
+$mbxline = $name+";"+$email+";"+$rectyp+";"+$liti+";"+$accdis+";"+$upn+";"+$loc+";"+$lic
+$mbxall  = $mbxall + "`n" + $mbxline
+ 
+}
+ 
+$mbxall | out-file $file
+ 
+ 
+ 
+#$lic = $mbs | foreach { Get-MsolUser -UserPrincipalName $_.userprincipalname }
+ 
+#$lic | sort displayname | select displ*,usagelocation,userprin*,islicensed | export-csv -Encoding unicode -Delimiter ";" rbilicenses.csv -NoTypeInformation
+
+

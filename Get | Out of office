@@ -1,0 +1,27 @@
+ Get-MailboxAutoReplyConfiguration
+ 
+ 
+RunspaceId       : 33072d79-44ab-4164-8eae-7387546f06ca
+AutoReplyState   : Disabled
+EndTime          : 03/05/2014 15:00:00
+ExternalAudience : All
+ExternalMessage  :
+InternalMessage  :
+StartTime        : 02/05/2014 15:00:00
+MailboxOwnerId   : Griffin, Sarah (RBI-UK)
+Identity         : Griffin, Sarah (RBI-UK)
+IsValid          : True
+ObjectState      : Unchanged
+ 
+ 
+ 
+ 
+ 
+ 
+Set-MailboxAutoReplyConfiguration -Identity username -AutoReplyState Enabled/Disabled/Scheduled [-EndTime DateTime] [-ExternalAudience None/Known/All] [-ExternalMessage message] -InternalMessage  message [-StartTime DateTime]
+ 
+From <http://www.petri.co.il/set-out-of-office-for-another-user-exchange-2010.htm#> 
+ 
+
+
+

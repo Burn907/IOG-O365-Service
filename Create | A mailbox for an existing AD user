@@ -1,0 +1,8 @@
+Run in Local Exchange Shell
+Enable-RemoteMailbox alias@b2b.regn.net -primarysmtpaddress first.last@rbi.co.uk -RemoteRoutingAddress  O365rbiuk-alias@reedelsevier.mail.onmicrosoft.com
+
+
+Enable-RemoteMailbox agrebik@b2b.regn.net -primarysmtpaddress keis.agrebi@reedbusiness.com -RemoteRoutingAddress -alias keis.agrebi@rbi.co.uk O365rbiuk-agrebik@reedelsevier.mail.onmicrosoft.com
+ 
+ 
+Enable-RemoteMailbox username@b2b.regn.net -primarysmtpaddress  email address  -RemoteRoutingAddress  O365rbiuk-alias@reedelsevier.mail.onmicrosoft.com 

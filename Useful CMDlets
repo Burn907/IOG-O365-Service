@@ -1,0 +1,693 @@
+How to get Mailbox|User|Distribution Group|Distribution List|Security Group – Information.
+Get-MsolUser -UserPrincipalName usuario@domain.com |FL
+Get-Mailbox -identity user@example.com| FL
+Get-MailboxStatistics user@example.com | FL
+Get-Mailbox -identity user@example.com | Select -Expand EmailAddresses Alias
+Get-CASMAilbox -Identity user@domain.com |FL DisplayName,*MAPI*,*Pop*, *ActiveSync*,*Imap*, *Ews*, *OWA*
+To find every alias for each user or DG/DL run the command below:
+Get-Recipient | FL name, @{name=”count”;expression={[array]($_.EmailAddresses).Count}},EmailAddresses
+Get-MSOLuser -User user@domain.com |Select -Expand Proxyaddresses
+Get-MSOLuser |Select -Expand Proxyaddresses
+To search a user / aliases /mailbox groups using email address, run the command below:
+Get-Recipient | where {$_.EmailAddresses -match “cloud1@amdocorp.com”} | FL
+To search an existing user using Display Name.
+Get-Recipient | where {$_.DisplayName -match “Alain Lopez”} | FL Name, DisplayName, WindowsLiveID, EmailAddresses
+Get-Recipient | where {$_.DisplayName -match “Alain Lopez”} | FL
+To search an existing user using the windows Live Id and check if is a federated user:
+Get-Recipient | where {$_.WindowsLiveID -match “alain@lgvcorp.co”} | FL
+To search Mail Enable Users (MailUser) in the organization:
+Get-Recipient | Where {$_.RecipientType -Match “MailUser”} | FT
+Get-Recipient | Where {$_.RecipientTypeDetails -Match “MailUser”} | FT
+To Get Proxy Addesses from MOP
+Get-Msoluser | FL DisplayName,ProxyAddresses
+Security Group Addresses
+Get-Msolgroup | FL DisplayName,ProxyAddresses
+ 
+How to Work With Address Book
+Usually when Dir Sync is enabled, you cannot run the PowerShell command for hide or Unhide a Mailbox: 
+In Federated Environment you can use Active Directory Exchange Attribute
+Hide a User from the Shared Address Book in Office 365
+Set-Mailbox -Identity mailbox@domain.com -HiddenFromAddressListsEnabled $False
+Set-Mailbox “Usuario Pruebas” -HiddenFromAddressListsEnabled $true
+Hide a external contact from the Global Address Book in Office 365
+Set-MailContact email@dominio.com -HiddenFromAddressListsEnabled $true
+Hide all external contacts from the Global Address Book in Office 365
+Get-MailContact -ResultSize unlimited | Set-MailContact -HiddenFromAddressListsEnabled $true
+Exchange Online View Logon Statistics 
+# Last Log on and Log off – If the organization has more than 1000 users, has to import the information to a CSV file 
+Get-MailboxStatistics -Identity user@example.com | Select Identity, LastLogOnTime, LastLogOffTime
+ 
+Get-Mailbox -Resultsize Unlimited | Get-MailboxStatistics | FL displayname, LastLogonTime | FL | Out-file “C:\Users\UserDesktopName\Desktop\Logon1.txt”
+ 
+Get-LogonStatistics -Identity user@lopezdaza.us
+ 
+Get-LogonStatistics -Identity user@lopezdaza.us |FL                  (Full information)
+ 
+Get-LogonStatistics -Identity user@lopezdaza.us |FL UserName,LogonTime,LastAccessTime,ServerName
+# To view the last logon for all organization run the command below:
+Get-mailbox | Get-MailboxStatistics | fl displayname, LastLogonTime
+# To see the last DirSync, run the command below:
+Get-MsolCompanyInformation |FL LastDirSyncTime
+# How to add an additional Alias or smtp email address to an existing user in Exchange Online 
+Set-Mailbox john@contoso.com -EmailAddresses @{add=”john@northamerica.contoso.com”}
+# To remove a single alias from a mailbox via PowerShell you can do it by running: 
+Set-Mailbox user@domain.com -EmailAddresses @{remove=”alias@domain2.com“}
+# To remove a few aliases, not all, just add a coma and the other ones: 
+Set-Mailbox user@domain.com -EmailAddresses @{remove=”alias@domain2.com“,”alias2@domain3.com“}
+Get-Recipient | Where {$_.EmailAddresses -Match alias@domain.com} | Set-Mailbox -EmailAddresses @{Remove=alias@domain.com}
+ 
+# To remove ALL aliases and just leave primary:  
+Set-Mailbox user@domain.com -EmailAddresses $null 
+ 
+Get Display Name (when an admin try to add a new user and receive error that already exist run the command to identify which mailbox has the user as an alias:
+Get-Mailbox -Identity user@example.com | Fl *DisplayName 
+ 
+Get Address List Membership
+Get-Mailbox -Identity user@example.com | Select -Expand AddressListMembership 
+ 
+Get the Aliases, SMTP, SIP, smtp for all mailbox in the organization:
+Get-Mailbox | Select -Expand EmailAddresses Alias 
+ 
+To find every alias for each user, run the command below:
+Get-Mailbox | FL name, @{name=”count”;expression={[array]($_.EmailAddresses).Count}},EmailAddresses
+ 
+To find all mailboxes that is associated with specific domain:
+Get-Mailbox | where {$_.EmailAddresses -match “example.com“} | fl Name, RecipientType, EmailAddresses 
+ 
+To find all distribution groups that is associated with specific domain:
+Get-DistributionGroup | where {$_.EmailAddresses -match “example.com “} | fl Name, EmailAddresses
+To find all Universal Distribution groups in the organization:
+Get-recipient | where {$_.RecipientType -match “MailUniversalDistributionGroup”} | FT
+Get-recipient | where {$_.GroupType -match “Universal”} | FT
+To check External Contact information in the GAL
+Get-MailContact “ContacName” | fl *emailaddress* 
+To assign Ownership for a DG:
+Set-DistributionGroup “GroupName” -ManagedBy “Admin@example.com” -BypassSecurityGroupManagerCheck
+ 
+To add Member into distribution group:
+Add-DistributionGroupMember –Identity “GroupName” –Member user@example.com
+ 
+To get the AD Attributes for a particular user:
+Get-ADUser -Identity username -Properties *
+ 
+SEND AS PERMISSIONS     –
+To configure a mailbox so that a user other than the mailbox owner can use that mailbox to send messages:
+Add-RecipientPermission -Identity user@example.com -Trustee Admin@example.com -AccessRights SendAs
+To check Send As permissions for one user:
+Get-RecipientPermission -Identity user@example.com | Select Trustee, AccessControlType, AccessRights
+To remove Send As settings from a mailbox, use the following command:
+Remove-RecipientPermission -Identity user@example.com -AccessRights SendAs -Trustee Admin@example.com
+To view all Send As permissions you’ve configured in your organization:
+Get-RecipientPermission | where {($_.Trustee -ne ‘nt authority\self’) -and ($_.Trustee -ne ‘null sid’)}
+To View Send As permission on a specific recipient
+Get-RecipientPermission user@example.com
+ 
+ VERIFY SEND ON BEHALF 
+To grant a user the ability to send mail on behalf of another user:
+Set-Mailbox -Identity user@example.com -GrantSendOnBehalfTo admin@example.com
+ 
+To verify that the permissions send mail on behalf of another user:
+Get-Mailbox -identity user@example.com | fl *GrantSendOnBehalfTo
+ 
+To remove Send On Behalf permission from a mailbox, use the following command:
+Set-Mailbox -Identity user@example.com -GrantSendOnBehalfTo $NULL
+ 
+To export the commands or results use the following:
+Get-MailboxPermission -Identity user@example.com | Select User, AccessRights, Deny | FL| Out-file “C:\Users\UserExample\Desktop\FileName.txt”
+Grant Read Permissions to a user mailbox
+To grants “User3” read permission to read User1’s mailbox.
+Add-MailboxPermission -Identity “user1” -User “usuario3” -AccessRights ReadPermission
+ 
+To sets Tony Smith as the owner of the resource mailbox Room 222.
+Add-MailboxPermission -Identity “Room 222” -Owner “Tony Smith”
+GRANT FULL MAILBOX PERMISSIONS
+Assign permissions to one Exchange Online administrator
+Add-MailboxPermission -Identity user@example.com -user admin@example.com –AccessRights FullAccess -Automapping $false
+Grant full mailbox access
+Add-MailboxPermission -Identity user@example.com -User admin@example.com -AccessRights FullAccess -InheritanceType All -Automapping $false
+This example grants the user Mark Steele full access permission to Alain Lopez mailbox and disables the auto-mapping feature. Don’t see Mailbox in Outlook and OWA
+Add-MailboxPermission -Identity User1 -User ‘Alain Lopez’ -AccessRight FullAccess -InheritanceType All -Automapping $false
+Remove mailbox permissions Mailbox Permission
+Remove-MailboxPermission -Identity user@example.com -User Admin@example.com -AccessRights FullAccess
+Assign Full permission to access one user to see all users’ mailboxes
+Get-Mailbox -ResultSize unlimited -Filter {(RecipientTypeDetails -eq ‘UserMailbox’) -and (Alias -ne ‘Admin’)} | Add-MailboxPermission -User Admin -AccessRights fullaccess -InheritanceType all -Automapping $false
+Assign Full permission to access one user to specific domain in the organization
+Get-Mailbox | where-Object {$_.EmailAddresses -match “example.com”} | Add-MailboxPermission -user admin@example.com -AccessRights FullAccess -Automapping $false
+Assign permissions to the “Organization Management” role group:
+Add-MailboxPermission user@amdocorp.com -User “Organization Management” -AccessRights FullAccess -InheritanceType All
+Add-MsolRoleMember -RoleName “Organization Management” -RoleMemberEmailAddress user@amdocorp.com
+ 
+Assign Role Member in Small Business
+Add-MsolRoleMember -RoleName “Company Administrator” -RoleMemberEmailAddress user2@amdocorp.com
+ 
+Verify Grant full mailbox access 
+Get-MailboxPermission -Identity user@example.com | Select User, AccessRights, Deny
+ 
+To gather the correct name of the folder, run the command below:
+Get-MailboxFolderStatistics User | select folderpath
+Add-MailboxFolderPermission -Identity user@example.com:\calendar -user Admin@example.com-AccessRights owner
+Add-MailboxFolderPermission Cloud2@amdocorp.com:\calendar-user User@domain.com-AccessRights PublishingAuthor
+Add-MailboxFolderPermission -Identity user@example.com:\calendar -user Default -AccessRights owner
+Add-MailboxFolderPermission jesus@lopezdaza.us:\calendar-user Kiosk@amdocorp.com -AccessRightsPublishingAuthor
+Add-MailboxFolderPermission Cloud2@amdocorp.com:\calendario-user Usuario5@amdocorp.com -AccessRights Editor
+ 
+Set-MailboxFolderPermission -Identity “room mailbox:\calendar” -User Default -AccessRights Reviewer
+After that the default permission level of the room mailbox calendar is changed to “Reviewer”. 
+For tips, if you want specific user don’t have the Reviewer permission, please run the following command to assign him a specific permission:
+Add-MailboxFolderPermission -Identity “room mailbox:\calendar” -User “specific user” -AccessRights AvailabilityOnly
+ 
+Mailbox Folder Permission
+ReadItems   The user has the right to read items within the specified folder.
+CreateItems   The user has the right to create items within the specified folder.
+EditOwnedItems   The user has the right to edit the items that the user owns in the specified folder.
+DeleteOwnedItems   The user has the right to delete items that the user owns in the specified folder.
+EditAllItems   The user has the right to edit all items in the specified folder.
+DeleteAllItems   The user has the right to delete all items in the specified folder.
+CreateSubfolders   The user has the right to create subfolders in the specified folder.
+FolderOwner   The user is the owner of the specified folder. The user has the right to view and move the folder and create subfolders. The user can’t read items, edit items, delete items, or create items.
+FolderContact   The user is the contact for the specified folder.
+FolderVisible   The user can view the specified folder, but can’t read or edit items within the specified folder.
+The AccessRights parameter also specifies the permissions for the user with the following roles, which are a combination of the rights listed previously:
+None   FolderVisible
+Owner   CreateItems, ReadItems, CreateSubfolders, FolderOwner, FolderContact, FolderVisible, EditOwnedItems, EditAllItems, DeleteOwnedItems, DeleteAllItems
+PublishingEditor   CreateItems, ReadItems, CreateSubfolders, FolderVisible, EditOwnedItems, EditAllItems, DeleteOwnedItems, DeleteAllItems
+Editor   CreateItems, ReadItems, FolderVisible, EditOwnedItems, EditAllItems, DeleteOwnedItems, DeleteAllItems
+PublishingAuthor   CreateItems, ReadItems, CreateSubfolders, FolderVisible, EditOwnedItems, DeleteOwnedItems
+Author   CreateItems, ReadItems, FolderVisible, EditOwnedItems, DeleteOwnedItems
+NonEditingAuthor   CreateItems, ReadItems, FolderVisible
+Reviewer   ReadItems, FolderVisible
+Contributor   CreateItems, FolderVisible
+The following roles apply specifically to calendar folders:
+AvailabilityOnly   View only availability data
+LimitedDetails   View availability data with subject and location
+ 
+Do you want to send emails as the room mailbox address?
+Add-RecipientPermission -Identity “room mailbox” -Trustee “user” -AccessRights Sendas
+To assign Full Access permissions to all Roomailbox in the Organization for one user, run the command below:
+Get-Mailbox -ResultSize unlimited -Filter {(RecipientTypeDetails -eq ‘RoomMailbox’) -and (Alias -ne ‘Admin’)} | Add-MailboxPermission -User User@domain.com -AccessRights fullaccess -InheritanceType all -Automapping $false
+ 
+To assign Full Access permissions to all RooMailbox in the Organization for all users using Microsoft Outlook Client, run the command below:
+Get-Mailbox -ResultSize unlimited -Filter {(RecipientTypeDetails -eq ‘RoomMailbox’) -and (Alias -ne ‘Admin’)} | Add-MailboxPermission -User Default -AccessRights fullaccess -InheritanceType all -Automapping $false
+To see the each folder size for a specific mailbox, run the command below:
+Get-MailboxFolderStatistics –Identity user@domain.com | Select Name,FolderSize 
+To see the list of all folders with a count of the number of items and its size for one user:
+Get-MailboxFolderStatistics -Identity user@domain.com | Select Name,ItemsInFolder,FolderSize | FL
+To see the list of all folders with a count of the number of items and its size for all users in the organization:
+Get-Mailbox | Get-MailboxFolderStatistics | Select Identity,Name,ItemsInFolder,FolderSize | FL > Folder.txt
+Set forwarding
+Set-Mailbox -Identity user@example.com -ForwardingSmtpAddress external@domain.com -DeliverToMailboxAndForward:$true
+Get Forwarding information
+Get-Mailbox user@example.com | Select DeliverToMailboxAndForward, ForwardingSMTPAddress 
+Get-Mailbox -identity user@example.com | fl displayname, forwardingsmtpaddress
+Get-Mailbox user@example.com | Select DeliverToMailboxAndForward
+Verify Forwarding’s permissions
+Get-Mailbox -Identity user@example.com | Select ForwardingSmtpAddress
+To check Forwarding for one user 
+Get-Mailbox -Identity user@example.com | Select ForwardingSmtpAddress
+To check forwarding for all users in the organization:
+Get-Mailbox | Select ForwardingSmtpAddress,displayname
+To remove email forwarding for one user:
+Set-Mailbox -Identity user@example.com -ForwardingSmtpAddress $NULL
+Disable automatic message forwarding to all domains outside your organization
+Set-RemoteDomain Default -AutoForwardEnabled $false
+Disable automatic message forwarding to a specific domain outside your organization
+New-RemoteDomain -Name Example -DomainName Example.com
+Enable automatic message forwarding
+Set-RemoteDomain Example.com -AutoForwardEnabled $true
+Enable automatic message forwarding to all domains outside your organization
+Set-RemoteDomain Default -AutoForwardEnabled $true
+ 
+You can use this little script if you need to get the list of users who have forwarding set up and the address it is sending to, instead of getting a full list and then sorting:
+ 
+Get-Mailbox –ResultSize unlimited | where {($_.emailaddresses -match “tenant.onmicrosoft.com”) -and -not ($_.ForwardingSmtpAddress -like $null)} | select Identity,UserPrincipalName,ForwardingSmtpAddress
+How to view Inbox Rules created in the organization
+Get-InboxRule -Mailbox Joe@Contoso.com |FL
+To check all Inbox Rule in the organization
+Get-InboxRule |fl Name,Enabled,Description,*Box*
+ 
+Full information run the command below:
+Get-InboxRule
+ 
+How to get Transport Rules in the organization
+ 
+To get the transport rule list
+Get-TransportRule | FT
+ 
+To get more detail of the existing transport rule:
+Get-TransportRule |FL Name,Identity,WhenChanged,Description,IsValid,State
+Get-TransportRule “Block e-mail messages between Sales and Brokerage Groups” | Format-List
+Get-TransportRule [-Identity <RuleIdParameter>] [-DomainController <Fqdn>] [-Organization <OrganizationIdParameter>] [-State <Enabled | Disabled>]
+CHANGE PRIMARY EMAIL ADDRESS
+ 
+Set-Mailbox “Mailbox’sDisplayName” –EmailAddresses SMTP:userprincipal@contoso.com,alias2@contoso.com,alias3@fabrikan.com
+Change Primary email Address using SIP
+ 
+Set-Mailbox “DisplayName” -EmailAddresses SMTP:user@contoso.com,alias1@ Coffeebeans.onmicrosoft.com,alias2@ Fabrikam.com; Set-Mailbox “user2” -EmailAddresses SIP:user@contoso.com
+Auto Replay
+Set-MailboxAutoReplyConfiguration user2@example.com –AutoReplyState Enabled –ExternalMessage “Please reach me after December 31, 2012” –InternalMessage “Autoreplay Test”
+ 
+Migration
+Get-MigrationBatch -Diagnostic
+ 
+SET PASSWORD NEVER EXPIRE
+Set password never expire for one user
+Set-MsolUser -UserPrincipalName user@example.com -PasswordNeverExpires $true
+Set password never expire for all user
+Get-MSOLUser | set-msoluser -PasswordNeverExpires $true
+Check what users have the password never expire
+Get-MSOLUser | select user*, password*
+Alternatively, to see all users and their “Password never expires setting”, you can run the following PowerShell command:
+Get-MSOLUser | Select UserPrincipalName, PasswordNeverExpires
+ 
+To check if one user has enabled, run the command below:
+Get-MSOLUser  -UserPrincipalName user@domain.com | select user*, password*
+Office 365 – Password Expiration Notifications in Outlook
+Set-MSOLPasswordPolicy –DomainName amdocorp.com –NotificationDays 10 -ValidityPeriod 180
+To verify the Password Policy, run the command below:
+Get-MSOLPasswordPolicy -DomainName amdocorp.com | FL
+TO CREATE NEW PASSWORD FOR USERS
+Set-MsolUserPassword -UserPrincipalName user@example.com -NewPassword Password1 -ForceChangePassword $false
+To create new password for all users in the organization:
+Get-MsolUser | Set-MsolUserPassword -NewPasswordPassword1 -ForceChangePassword $True
+Disable or Enable strong Password for User
+Set-MsolUser  -UserPrincipalName user@example.com -StrongPasswordRequired  $False
+To Disable the strong password for all users in the organization:
+Get-MsolUser | Set-MsolUser -StrongPasswordRequired  $False
+To check if the Password require strong password when password is changed
+Get-MsolUser  -UserPrincipalName user@example.com | FL *StrongPasswordRequired
+To check if the password require strong password when password is changed for all users:
+Get-MsolUser | FL UserPrincipalName,*StrongPasswordRequired
+LITIGATION HOLD
+Put a Mailbox on Litigation Hold: To enable the litigation on hold for one mailbox:
+Set-Mailbox user@domain.com -LitigationHoldEnabled $True -Force
+To verfiy the litigation on hold for a mailbox:
+Get-Mailbox -identity user1@example.com | FL  DisplayName,WindowsLiveID,*Litigation*
+To enable the litigation on hold for all mailbox in the organization:
+Get-Mailbox -ResultSize Unlimited | Set-Mailbox -LitigationHoldEnabled $True -Force 
+To verfiy the litigation on hold for all mailbox in the organization:
+Get-Mailbox | FL DisplayName,WindowsLiveID,*Litigation*
+ 
+The following command sets the duration of the litigation hold on Ann Beebe’s mailbox to one year.
+Set-Mailbox user@domain.com -LitigationHoldEnabled $true -LitigtionHoldDuration 365
+ 
+The following command sets the duration of the litigation hold on Ann Beebe’s mailbox unlimited.
+Set-Mailbox user@domain.com -LitigationHoldEnabled $true -LitigtionHoldDuration Unlimited
+ 
+The following command puts Pilar Pinilla’s mailbox on litigation hold, and sets the litigation-hold duration for 7 years.
+Set-Mailbox user@domain.com -LitigationHoldEnabled $true -LitigationHoldDuration 2555
+After litigation hold activation, over 20.000 items would be lost and send to the exchange server:
+To Recover the items into one single folder run the following CMD:
+Search-Mailbox UserOnHold@domain.com -TargetMailbox admin@domain.com -TargetFolder recoveryfolder -SearchDumpsterOnly
+UserOnHold@domain.com is the mailbox to be recovered
+admin@domain.com  is the  target.
+To check litigationHold for specific user:
+Get-Mailbox -identity user1@example.com | fl *LitigationHoldEnabled
+Recover a mailbox:
+Get-RemovedMailbox xxxx@yyyy >c:\xxxxx.txt 
+Open this file (xxxxx.txt) add the MicrosoftOnlineServicesID
+New-Mailbox -Name “XXXX” -RemovedMailbox xxxx@yyyy -MicrosoftOnlineServicesID <o que se retirou do arquivo> -Password (ConvertTo-SecureString -String ‘<password a usar>’ -AsPlainText -Force)
+RETENTION POLICY  http://technet.microsoft.com/en-us/exchangelabshelp/gg271153#policycmdlets
+To obtain retention policy
+ 
+Get-RetentionPolicy
+To obtain the retention policy for all mailbox
+Get-Mailbox | ft identity, RetentionPolicy
+To delete the MRM or retention policy for one user:
+Set-Mailbox -Identity username -RetentionPolicy $null
+ 
+To delete the MRM or retention policy for the organization:
+Get-Mailbox | Set-Mailbox -RetentionPolicy $null
+Display a list of the retention policies available in your organization.
+Get-RetentionPolicy | fl Name
+ 
+Get Detail information for all user in the organization any domain Archiving 
+Get-Mailbox -ResultSize unlimited -Filter {(RecipientTypeDetails -eq ‘UserMailbox’)} | fl
+Get-RetentionPolicy -Identity user@example.com | FL Name,RetentionPolicy
+ 
+If receive error deleting retention policies:
+This operation is not allowed for the organization with disabled customizations. To enable this operation, you need to execute Enable-OrganizationCustomization task first.
+ 
+Enable-OrganizationCustomization
+http://help.outlook.com/en-us/140/hh299030.aspx?sl=1
+ 
+To search all policy tags in the organization run:
+Get-RetentionPolicyTag | fl Name,Type,AgeLimitForRetention,RetentionAction 
+ENABLE OR DISABLE (BLOCK) A USER’S CREDENTIAL IN OFFICE 365
+This command Enable (TRUE) and Disable (FALSE)  to block OWA, MOP, SharePoint and every services  in O365 (which will block them from being able to sign in).  This cannot be set for a synced user.
+Set-MsolUser -UserPrincipalName user@example.com -blockcredential $true
+ 
+Disable or remove feture “Change Password’s” option from OWA/ECP
+Create a New Role:
+New-ManagementRole –Name MyBaseOptions-NoPSD –Parent MyBaseOptions
+ 
+Remove el parameter “Password”  from ECP
+Set-ManagementRoleEntry “MyBaseOptions-NoPSD\Set-Mailbox” -Parameters Password –RemoveParameter
+ 
+Assign or sets user’s location (country) of this user. The country must be a two-letter ISO code. This can be set for synced users as well as managed
+Set-MsolUser -UserPrincipalName user@example.com -UsageLocation “US”
+ 
+GET INFORMATION
+Find commands (MSOL)
+Get-Command –Module msonline*
+Check if you still are connected at MOS
+Get-Pssession
+ 
+To check External contacts information in the GAL
+ Get-MailContact | FL *EmailAddress*
+ 
+TO CHECK EXTERNAL CONTACT INFORMATION IN THE GAL FOR ONE USER
+ Get-MailContact ContactName | FL *EmailAddress*
+ 
+To assign Ownership of the distribution group:
+Set-DistributionGroup “GroupName” -ManagedBy “Admin@contoso.com” –BypassSecurityGroupManagerCheck
+To assign Ownership permissions of all Distribution Group that are using specific domain:
+Get-DistributionGroup | where-Object {$_.EmailAddresses -match “Amdocorp.com”} | Set-DistributionGroup -ManagedBy Admin@AmdoCorp.com –BypassSecurityGroupManagerCheck
+ 
+To assign Ownership permissions of all Distribution Group in the organization:
+Get-DistributionGroup | Set-DistributionGroup -ManagedBy Admin@domain.com -BypassSecurityGroupManagerCheck
+To add members in the distribution group:
+Add-DistributionGroupMember –Identity “GroupName” –Member user@contoso.com
+To remove a member from the distribution group:
+Remove-DistributionGroupMember -Identity “GroupName” -Member user@contoso.com
+To check the members list from the distribution group:
+Get-DistributionGroupMember -identity “GroupName” |FL DisplayName,WindowsLiveID,RecipientType,EmailAddresses,PrimarySmtpAddress 
+ 
+To export the data to a CSV file in your PC, run the command below:
+Get-DistributionGroupMember ExchangeServers |FL DisplayName,WindowsLiveID,RecipientType,EmailAddresses,PrimarySmtpAddress | FL | Out-file “C:\Users\UserExample\Desktop\DGroup.txt”
+To Change the primary email address and delete the existing proxy addresses o aliases.
+Set-DistributionGroup -Identity “GroupName” -EmailAddresses shared@contoso.com
+Check the Aliases, Primary email addresses
+Get-DistributionGroup -Identity “GroupName” |FL *PrimarySmtpAddress,*emailaddress*
+Remove DG or the administrator does not have the appropriate permissions applied.
+Remove-DistributionGroup “GroupName” -BypassSecurityGroupManagerCheck
+The following example shows how to configure delivery reports to be sent to the message originators:
+Set-DistributionGroup -Identity “GroupName” -ReportToOriginatorEnabled $True
+Run the following cmdlet to hide a distribution group
+Set-DistributionGroup -Identity “GroupName” -HiddenFromAddressListsEnabled $true
+Create a Distribution Group:
+New-DistributionGroup -Name Support2 
+To Send As emails as a (DL) (DG) Distribution Group run the command below:
+Add-RecipientPermission -Identity user@example.com -Trustee Admin@example.com -AccessRights SendAs
+Security Groups
+Manage Manage Security Groups using MOSMWP
+To search all security groups in the organization:
+Get-Recipient | Where {$_.RecipientType -Match “MailUniversalSecurityGroup”} | FT
+Get-Recipient | Where {$_.RecipientTypeDetails -Match “MailUniversalSecurityGroup”} | FT
+The Object Id can be obtained by using the following command: 
+Get-MsolUser -UserPrincipalName <user ID> | Select ObjectId
+ 
+After you obtain the Object Id, you can add the value when you create security group:
+New-MsolGroup -DisplayName user@example.com-Managedby <Object Id>
+ 
+Creating Security Groups
+New-MsolGroup -DisplayName <Display Name> -Desciption <Description of the Security Group> 
+ 
+Remove securitygroups
+Remove-MsolGroupMember -ObjectId <Guid1> -GroupMemberObjectId <Guid2> 
+ 
+To remove all Distribution Groups from MOP:
+Get-MsolGroup -ALL | Remove-MsolGroup -Force
+ 
+Add new group members
+Add-MsolGroupMember -ObjectId <Guid1> -GroupMemberObjectId <Guid2> -GroupMemberType Group
+ 
+Remove group members
+Remove-MsolGroupMember -ObjectId <Guid1> -GroupMemberObjectId <Guid2> 
+ 
+Update the properties of a group
+Set-MsolGroup -ObjectID <ObjectId> -description “Test security group”
+ 
+Verify group members
+Get-MsolGroupMember -GroupObjectId <Object Id> -All
+Add a domain or user into safe sender (White list) list:
+Set-MailboxJunkEmailConfiguration -Identity admin@example.onmicrosoft.com -TrustedSendersAndDomains “contoso.com”,”fabrikam.com”,”user1@contoso.com”,user2@fabrikam.com
+CREATE USERS
+Create a user
+New-MSOLUser -UserPrincipalName user@example.com -DisplayName “user11”
+ 
+Remove User from MOP
+Remove-MsolUser -UserPrincipalName user@contoso.com -force
+LICENSES
+Assing a license
+Set location first
+ 
+Set-MsolUser -UserPrincipalName user@example.com -UsageLocation co -BlockCredential $false
+ 
+Get skuid
+Get-MsolAccountSku | Select AccountSkuId
+ 
+Assing all licenses
+Set-MsolUserLicense -UserPrincipalName user@example.com -AddLicenses “jsnetwork:enterprisepack”
+Convert License:
+Set-MsolUserLicense -UserPrincipalName user@contoso.com -RemoveLicenses “contoso:standardpack” -AddLicenses “contoso:enterprisepack” 
+ 
+To get the detail for each user in the organization
+Get-Msoluser -all | ForEach-Object { “=============”; $_.DisplayName; $_.licenses[0].servicestatus }
+ActiveSync
+ 
+Get-ActiveSyncDeviceStatistics -Mailbox user@example.com
+To  determine who in the organization has a Microsoft Exchange ActiveSync device. For each device, the Exchange ActiveSync device statistics are retrieved:To check mobile phone configured to synchronize with the mailbox that belongs to the user
+ 
+$UserList = Get-CASMailbox -Filter {hasactivesyncdevicepartnership -eq $true -and -not displayname -like “CAS_{*”} | Get-Mailbox
+ 
+$UserList | foreach { Get-ActiveSyncDeviceStatistics -Mailbox $_}
+ 
+How to change the languages for a user mailbox in Exchange online Click here:
+Set-Mailbox -Identity “Katarina Larsson” -Languages “Es-Es”
+To check the external contacts in the GAL:
+Get-MailContact ContacName |FL *EmailAddress*
+To verify the UPN user
+ 
+Get-Mailbox -Identity ‘block’ | fl *DisplayName,PrimarySmtpAddress
+Mailbox Quota Archive mailbox
+Get-Mailbox -Identity user1@example.com | FL *quota
+Get Max Size Sending and Receiving Send Receive
+Get-Mailbox -Identity user@example.com | FL *Size
+Get-Mailboxstatistics user1@lopezdaza.us|fl TotalItemSize ; Get-Mailbox -Identity user1@example.com | FL *quota
+Check Office 365 Plan
+Get-MailboxPlan -AllMailboxPlanReleases |fl name,PersistedCapabilities,Identity,Displayname
+Get-CASMailboxPlan
+To Verify CAS services if are Enabled or Disable OWA, IMAP, POP, MAPI, Active Sync Enabled
+Get-CASMAilbox -identity user@example.com
+To check Full CAS information 
+Get-CASMAilbox -identity user@example.com |FL
+ 
+To Disable OWA for specific user
+Set-CASMailbox -Identity user@example.com -OWAEnabled:$false
+To Disable OWA for all users in the organization, run the command below:
+Get-Mailbox | Set-CASMailbox -OWAEnabled:$False
+ 
+To Disable OWA for specific Domain, run the command below:
+Get-Mailbox | where-Object {$_.EmailAddresses -match “amdocorp.com“} | Set-CASMailbox -OWAEnabled:$false
+To Disable MAPI
+Set-CASMailbox -Identity user@example.com -MapiEnabled:$false
+To Disable IMAP
+Set-CASMailbox -Identity user@example.com -IMAPEnabled:$false
+To Disable POP
+Set-CASMailbox -Identity user@example.com -POPEnabled:$false
+ 
+To Disable EWS
+Set-CASMailbox -Identity user@example.com -EWSEnabled:$false
+ To verify the CAS in Online  MAPI, IMAP, ActiveSync, POP, EWS for all mailbox in the organization: 
+Get-CASMAilbox |FL DisplayName,MAPIEnabled, PopEnabled, ActiveSyncEnabled,ImapEnabled, EwsEnabled, OWAEnabled
+ 
+To verify the CAS in Online  MAPI, IMAP, ActiveSync, POP, EWS for one user:
+Get-CASMAilbox -Identity user@amdocorp.com |FL DisplayName,MAPIEnabled, PopEnabled, ActiveSyncEnabled,ImapEnabled, EwsEnabled, OWAEnabled
+ 
+To enable EWS for an entire Tenant in Exchange Online:
+Get-Mailbox | Set-CASMailbox -EwsAllowOutlook $true
+ This will enable EWS to function properly in Exchange Online.
+ -EwsAllowOutlook
+-EwsAllowMacOutlook
+-EwsAllowEntourage
+ 
+To gather EWS information run the command below:  
+Get-CASMailbox -Identity “user2@lopezdaza.us” |FL *Ews*
+ 
+To enable the CAS for MAC and Entorurage for one user run the command below: 
+ 
+Set-CASMailbox -EwsAllowOutlook $true -Identity “user2@domain.com”
+ 
+Set-CASMailbox -EwsAllowMacOutlook $true -Identity “user2@domain.com”
+ 
+Set-CASMailbox -EwsAllowEntourage $true -Identity “user2@domain.com”
+ 
+To Enable for all users in the organization run the command below:
+Get-mailbox | Set-CASmailbox -EwsAllowOutlook $true
+ 
+Get Exchange Guid
+Get-Mailbox -identity user1@example.com | FL *ExchangeGuid
+Check all User’s information (E-mail fordward, PasswodNevExp, UserPrincipalName, BlackBerryUser, Using License
+ 
+Get-mailbox | FL
+ 
+Get-MSOLUser -all | FT
+Get-MSOLUser -all | FL *
+Check one User information (Email/ License / Company information / PassNevExp / 
+Get-MSOLUser -user user@example.com | FL
+To check the mailbox server name, run the command below: 
+Get-Mailbox User@example.com | Select DisplayName, ServerName
+DISABLE CONNECTED ACCOUNT FROM ECP
+We accomplished this by customizing the RBAC roles in O365 using a remote PowerShell session.
+	1. Export MyBaseOptions management role entries for reference:
+ Get-ManagementRoleEntry MyBaseOptions\* | ConvertTo-Html > C:\MyBaseOptions.htm
+	2. Copy the existing MyBaseOptions management role as new MyMailForwarding Role:
+ New-ManagementRole –Parent MyBaseOptions –Name MyMailForwarding
+	3. Copy the existing MyBaseOptions management role as a new MyMailbox role:
+ New-ManagementRole –Parent MyBaseOptions –Name MyMailbox
+	4. Remove all Set-Mailbox parameters (which include mail forwarding permissions) from the new MyMailbox role:
+ Remove-ManagementRoleEntry MyMailbox\Set-Mailbox
+	5. Add Set-Mailbox parameters back to MyMailbox role except those associated with mail forwarding:
+ Add-ManagementRoleEntry MyMailbox\Set-Mailbox –Parameters AcceptMessagesOnlyFrom, AcceptMessagesOnlyFromDLMembers, AcceptMessagesOnlyFromSendersOrMembers, ErrorAction, ErrorVariable, ExternalOofOptions, GrantSendOnBehalfTo, Identity, Languages, MailTip, MailTipTranslations, OutBuffer, OutVariable, Password, RejectMessagesFrom, RejectMessagesFromDLMembers, RejectMessagesFromSendersOrMembers, RequireSenderAuthenticationEnabled, UserCertificate, UserSMimeCertificate, WarningAction, WarningVariable
+To enable Audit for an administrator to Search Mailbox in ECP: 
+Set-Mailbox -Identity user@domain.com -AuditEnabled $true
+ 
+To enable mailboxes to audit search from ECP
+$UserMailboxes = Get-mailbox -ResultSize Unlimited -Filter {(RecipientTypeDetails -eq ‘UserMailbox’)} 
+$UserMailboxes | ForEach {Set-Mailbox $_.Identity -AuditEnabled $true}
+To create multiple alias via PowerShell
+After the SMTP (Primary email address) can add multiple alias adding the comma
+ 
+Set-Mailbox “DisplayName” –EmailAddresses SMTP:user@contoso.com,alias1@Coffeebeans.com,alias2@Fabrikam.com,alias3@Coffeebeans.com,alias4@contoso.onmicrosoft.com
+ 
+Get Display Name (when an admin try to add a new user and receive error that already exist run the command to identify which mailbox has the user as an alias:
+ 
+Get-Mailbox -Identity user1@contoso.com | FL *DisplayName
+ 
+Get Address List Membership
+Get-Mailbox -Identity user1@ contoso.com | Select -Expand AddressListMembership
+ 
+Get the Aliases, SMTP, SIP, smtp for all mailbox in the organization:
+Get-Mailbox | Select -Expand EmailAddresses Alias
+ 
+Get the Aliases, SMTP, SIP, smtp for One user
+Get-Mailbox -Identity user1@ contoso.com | Select -Expand EmailAddresses Alias
+ 
+To check the full information for an alias or mailbox use the command bellow:
+Get-Mailbox -Identity user1@contoso.com | FL
+To find all mailboxes that is associated with specific domain:
+Get-Mailbox | where {$_.EmailAddresses -match “contoso.com”} | fl Name, RecipientType, EmailAddresses
+ 
+To find all distribution groups that is associated with specific domain:
+Get-DistributionGroup | where {$_.EmailAddresses -match “contoso.com”} | FL Name, EmailAddresses
+ 
+To find information for specific distribution group
+Get-DistributionGroup -identity “Team Group” |FL Name,PrimarySmtpAddress,GroupType,EmailAddresses,GroupType,MemberJoinRestriction
+ 
+Change Primary email Address using SIP
+ 
+Set-Mailbox ” DisplayName” -EmailAddresses SMTP:user@contoso.com,alias1@ Coffeebeans.onmicrosoft.com,alias2@ Fabrikam.com; Set-Mailbox “user2” -EmailAddresses SIP:user@contoso.com
+To find a specific alias for each mailbox, or DG/DL  run the command below:
+Get-Recipient | where {$_.EmailAddresses -match “cloud1@amdocorp.com“} | Select -Expand EmailAddresses Aliases
+To find every alias for each user or DG/DL run the command below:
+Get-Recipient | FL name, @{name=”count”;expression={[array]($_.EmailAddresses).Count}},EmailAddresses
+ 
+Get-Msoluser | FL DisplayName,ProxyAddresses
+ 
+Get-Msolgroup | FL DisplayName,ProxyAddresses
+ 
+Connected Account Removed Connected Account
+ 
+New-POPsubscription
+New-IMAPsubscription
+New-Hotmailsubscription
+ 
+To remove connected account:
+Remove-Subscription “user@domain.com”
+ 
+A D F S  
+ 
+This example enables the organization identifier. This enables federation for the Exchange organization.
+Set-FederatedOrganizationIdentifier -Enabled $true
+Set-FederatedOrganizationIdentifier -DelegationFederationTrust “MicrosoftOnline” -AccountNamespace “amdocorp.com” -Enabled $true
+Get-FederatedOrganizationIdentifier
+http://technet.microsoft.com/en-us/library/dd351037.aspx
+Federation Commands Use the Get-SharingPolicy cmdlet to view the settings of sharing policies. Free/Busy Information
+http://technet.microsoft.com/en-us/library/dd335081.aspx
+ 
+Get-SharingPolicy | fl
+ 
+Get-FederationInformation -Domain amdocorp.onmicrosoft.com
+Get-OrganizationRelationShip | fl
+ 
+Shared Mailbox
+For instance, the _real_ parameters of Set-Mailbox can be retreived by running the following:
+(Get-Command -Name “Set-Mailbox”).Parameters
+Shared Mailbox is being checked for whether it has an Office 365 license after the 30-day grace period even though shared mailboxes do not require a license
+ 
+Set-Mailbox -Identity <MailboxIdParameter> -SKUAssigned:$True
+How to Create Equipment Mailboxes        
+New-Mailbox -Name “Notebook Computer 1” -Equipment 
+Configure the mailbox to automatically process meeting requests 
+Set-CalendarProcessing “Notebook Computer 1” -AutomateProcessing AutoAccept 
+ 
+How to Create a New Room Mailbox
+ 
+To search all mailbox in the organization:
+Get-Mailbox | Where {$_.RecipientTypeDetails -match “SharedMailbox”}
+Get-Recipient | where {$_.RecipientTypeDetails -match “SharedMailbox”} | FL Name, DisplayName, WindowsLiveID, EmailAddresses
+Specify resource delegates for equipment mailboxes
+ 
+Set-CalendarProcessing 
+To Create a Shared Mailbox  
+This PowerShell is to create the SharedMailbox, run the following PowerShell command:
+New-Mailbox –Name “Mailbox Shared” –Alias MShared –Shared
+MailboxShared         This is the display name of the SharedMailbox.
+Mshared                    This is the Alias 
+To Assign Mailbox Full Access permissions to a group  This PowerShell let the members access to the Mailbox Shared and Calendars.
+Add-MailboxPermission “Mshared”  -user “MSharedGroup” –AccessRights FullAccess -InheritanceType All
+Mshared                    This is the Alias of the Shared Mailbox.
+MsharedGroup        This is the username of the Distribution Group.  
+To Assign the security group the SendAs permission to the shared mailbox   To enable members of the Printing Services Staff security group to send e-mail from the shared mailbox, run the following command:
+Add-RecipientPermission “MShared” -Trustee “MSharedGroup” -AccessRights SendAs
+Mshared                    This is the Alias of the Shared Mailbox.
+MsharedGroup        This is the username of the Distribution Group. 
+Restrict the Number of Recipients per Message in Exchange Online
+Set-TransportConfig -MaxRecipientEnvelopeLimit 1000 
+Restricts the number of recipients per message to 300 for messages received through the Receive connector Contoso Receive Connector.
+Set-ReceiveConnector -Identity “Contoso Receive Connector” -MaxRecipientsPerMessage 300
+ 
+View the size and quota status of a specific mailbox
+Get-MailboxStatistics “user1” | Format-List StorageLimitStatus,TotalItemSize,TotalDeletedItemSize,ItemCount,DeletedItemCount
+ 
+To view the current size and quotas status the mailbox belonging to a user
+Get-MailboxStatistics “User2” | Format-List StorageLimitStatus,TotalItemSize,TotalDeletedItemSize,ItemCount,DeletedItemCount
+ 
+Get-Mailboxstatistics user1@lopezdaza.us |FL TotalItemSize ; Get-Mailbox -Identity user1@lopezdaza.us | FL *quota
+Sets the warning, prohibit send, and prohibit send and receive limits for John Smith’s mailbox to 200 megabytes (MB), 250 MB, and 280 MB respectively:
+Set-Mailbox -Identity jsmith@contoso.com -IssueWarningQuota 209715200 -ProhibitSendQuota 262144000 -ProhibitSendReceiveQuota 293601280 -UseDatabaseQuotaDefaults $false 
+ 
+Get-Mailbox *mail* | fl *recip*
+ 
+Get-TransportConfig | fl *env*
+Test-FederationTrustCertificate
+Set-FederationTrust
+Test-FederationTrust
+Set-FederatedOrganizationIdentifier
+Remove-FederatedDomain
+Remove-FederationTrust
+New-FederationTrust
+Get-FederationTrust
+Get-FederationInformation
+Get-FederatedOrganizationIdentifier
+Get-FederatedDomainProof
+Add-FederatedDomain
+Get-HybridConfiguration
+New-HybridConfiguration
+Set-HybridConfiguration
+Update-HybridConfiguration
+New-HybridConfiguration
+Set-HybridConfiguration
+Get-HybridConfiguration
+Update-HybridConfiguration
+ 
+To get a list of AD accounts without a SIP address entry:
+ 
+Get-ADUser -filter * -SearchBase "OU=RBI-UK,OU=Users,OU=User Accounts,DC=b2b,DC=regn,DC=net"  -Properties proxyAddresses |Where {$_.proxyAddresses} |Where {-not($_.proxyAddresses  -like "*sip*")} | Export-CSV -Path c:\fso\proxyaddresses 2.csv –NoTypeInformation
+ 
+From <https://wdmsb.wordpress.com/2013/02/04/powershell-for-office-365/> 
+ 
+ 
+
+
+

@@ -1,0 +1,27 @@
+	Find mailboxes with specific email address
+	 
+	get-mailbox | where {$_.primarysmtpaddress -like '*@buyerzone.com'} (doesn’t work in on prem)
+	 
+	Need to use this instead (don't forget can filter and export in ECM)
+	 
+	Get-recipient –filter{emailaddress –like *@buyerzone.com} | select name, primarysmtpaddress
+	 
+	Get-recipient –filter{emailaddress –eq aaron.bailey@buyerzone.com} | select name, primarysmtpaddress
+	 
+	 
+	 
+	Dilan did this  in 0365 to change Mendeley
+	 
+	12 June 2014
+	12:44
+	get-mailuser -Filter {Emailaddresses -like "*@mendeley.com"} | Set-MailUser -MaxSendSize Unlimited -EmailAddressPolicyEnabled $false
+	 
+	From <https://reedelsevier.service-now.com/incident.do?sys_id=2ae980990cd4a98096d28aa6a7cc458e&sysparm_nostack=true&sysparm_view=> 
+	 
+	 
+		1. $batch=import-csv C:\importfile.csv 
+		2. $batch                 (confirm the correct list of mailboxes has been imported into the session)
+		3. $batchname | ForEach {Search-Mailbox $_.name -SearchQuery '(seth* OR freedman*) AND (Received:08/04/2013..09/02/2015)' -TargetMailbox "discoveryexportmailbox4@rbi.co.uk" -TargetFolder "EXPORTS" -LogLevel full}
+	 
+	 
+	Get-messagetrace

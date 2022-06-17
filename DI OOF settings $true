@@ -1,0 +1,5 @@
+$rdl = Get-DistributionGroup rb* -ResultSize unlimited
+$rdl.count  -> 4570
+$rdltrue = $rdl | where { $_.SendOofMessageToOriginatorEnabled -eq $true }
+$rdltrue.count  -> 9
+$rdltrue

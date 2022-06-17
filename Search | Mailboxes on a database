@@ -1,0 +1,3 @@
+get-mailbox | where {$_Database -eq "NAMPR08DG015-db085"}
+ 
+get-mailbox -resultsize xx| where {$_Database -eq "NAMPR08DG015-db085"}

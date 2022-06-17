@@ -1,0 +1,5 @@
+Batch forwarding 
+ 
+$BatchName= Import-csv c:\filename.csv
+ 
+$BatchName | foreach {Set-Mailbox $_.username -ForwardingAddress $_.Contact}

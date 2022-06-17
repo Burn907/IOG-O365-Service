@@ -1,0 +1,3 @@
+Import-module activedirectory
+ 
+Get-aduser griffins1 -properties *

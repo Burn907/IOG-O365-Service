@@ -1,0 +1,5 @@
+$batch=import-csv c:\********
+ 
+$batch
+ 
+$batch | foreach {get-mailbox $_.name | Select Name, PrimarySMTPAddress, ForwardingAddress, DeliverToMailboxAndForward} | export-csv c:\users\username\desktop\test.csv

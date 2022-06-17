@@ -1,0 +1,19 @@
+
+Run in O365 Shell
+ 
+get-mailbox -ResultSize unlimited | where-object {$_.litigationholdenabled -eq $true} | export-csv C:\users\burnettc\Documents\LitigationHold.csv
+ 
+ 
+RBI Litigation Hold
+
+1. Open a notepad, edit the content as follows, save the file with .csv.
+
+ 
+2. Run this following command: 
+Import-csv c:\share\hold.csv | % {Set-Mailbox $_.PrimarySmtpAddress -LitigationHoldEnabled $true} 
+Below is my test result:
+
+
+
+3. Check if the litigation hold is enabled by running:
+Get-Mailbox "user name"| fl *LitigationHoldEnabled*

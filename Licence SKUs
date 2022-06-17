@@ -1,0 +1,19 @@
+If you want to check the different components of an O365 license here are the cmdlts you can run. You may use this when assigning specific parts of an E3 or E5 license:
+ 
+For E3
+ 
+Get-MsolAccountSku | Where-Object {$_.SkuPartNumber -eq "ENTERPRISEPACK"} | ForEach-Object {$_.ServiceStatus}
+ 
+For E5
+ 
+Get-MsolAccountSku | Where-Object {$_.SkuPartNumber -eq "ENTERPRISEPREMIUM"} | ForEach-Object {$_.ServiceStatus}
+ 
+For EMS E5
+ 
+Get-MsolAccountSku | Where-Object {$_.SkuPartNumber -eq "EMSPREMIUM"} | ForEach-Object {$_.ServiceStatus}
+ 
+If it’s not obvious what the Service Plans are, this might help 
+ 
+https://blogs.technet.microsoft.com/treycarlee/2014/12/09/powershell-licensing-skus-in-office-365/
+ 
+An example of this is the Service Plan MCOMEETADV is Audio Conferencing in the O365 Portal!

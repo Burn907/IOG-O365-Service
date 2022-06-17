@@ -1,0 +1,1 @@
+Get-mailbox "user@reedbusiness.com" | get-mailboxfolderstatistics | sort folderpath | select folderpath,itemsinfolder

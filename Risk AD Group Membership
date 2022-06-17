@@ -1,0 +1,7 @@
+To view memberships of groups contained under the risk domain use:
+ 
+Get-ADGroupmember "RISK IT Infrastructure OPS Alpha" -Server risk.regn.net 
+ 
+If using QAD 
+ 
+get-qadgroupmember "RISK IT Infrastructure OPS Alpha" -Service risk.regn.net

@@ -1,0 +1,1 @@
+Get-ADUser -Filter * -SearchBase 'OU=CSG,OU=RBI-UK,OU=Users,OU=User Accounts,DC=b2b,DC=regn,DC=net' -Properties name | export-csv -path c:\export.csv

@@ -1,0 +1,33 @@
+################################################################################################
+#
+# Script 2 - Newly created shared mailbox(es) finalization, run in O365 after sync
+#
+# Sets as shared and grants group members fullaccess and sendas permissions
+#
+################################################################################################
+
+########## Get list of mailboxes
+
+$infile	= "bulkshared-20210712.csv"
+
+$mbs	= Import-csv $infile
+
+########## Finalize mailboxes
+
+Foreach ( $mb in $mbs ) {
+
+	$m	= Get-Mailbox $mb.Email
+	$e	= [string]$m.PrimarySmtpAddress
+	$g	= "rsg-mbx-"+$e
+
+	Write-Host "`nProcessing $e ..."
+
+	$m | fl displ*,prim*
+
+	$m | Set-Mailbox -type shared -MessageCopyForSentAsEnabled $true
+	$m | Add-MailboxPermission -Accessrights fullaccess -User $g >$null
+	$m | Add-RecipientPermission -Accessrights sendas -Trustee $g -Confirm:$false >$null
+
+}
+
+Write-Host "`nAll done!`n"

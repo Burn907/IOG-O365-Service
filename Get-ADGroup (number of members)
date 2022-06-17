@@ -1,0 +1,1 @@
+ (Get-ADGroup "ris-o365 conditional access policy" -Properties *).member.count 

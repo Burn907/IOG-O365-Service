@@ -1,0 +1,108 @@
+################################################################################################
+#
+# Script 1 - Shared mailbox creation, run on premise
+#
+# Create B2B user(s) with remote mailbox (in O365) and the group(s) for fullaccess/sendas
+# Run second script to update settings and permissions in O365
+#
+################################################################################################
+
+########## Get list of mailboxes
+
+$infile	= "bulkshared-20210712.csv"
+
+$mbs	= Import-csv $infile
+
+########## Create mailboxes
+
+Foreach ( $mb in $mbs ) {
+
+	$displ	= $mb.DisplayName
+	$mail	= $mb.Email.ToLower()
+	$name	= $displ
+	$mgr	= $mb.Requester
+	$tt	= $mb.Ticket
+
+	If ( $mb.Email -match "@b2b.regn.net") {
+
+		$user	= ($mb.Email).split("@")[0]
+		$upn	= $mb.Email
+	}
+	Else {
+		$user	= ("res-mbx"+ -join ([char[]](65..90+97..122)*100 | Get-Random -Count 8) ).ToLower()
+		$upn	= $user+"@b2b.regn.net"
+	}
+
+	$rrmail	= "O365rbiuk-$user@reedelsevier.mail.onmicrosoft.com"
+	$umgr	= (Get-Recipient $mgr).SamAccountName
+	$orgu	= "b2b.regn.net/User Accounts/Service/RBI-UK/Shared"
+
+	########## Create user and mailbox
+
+	Write-Host "`nCreating remote mailbox $displ ..."
+
+	$txtpw	= -join(0..20|%{[char][int]((65..90) + (97..122) + (48..57) | Get-Random)})
+	$secpw	= ConvertTo-SecureString $txtpw -asplaintext -force
+
+	New-RemoteMailbox	-Name $name `
+				-PrimarySmtpAddress $mail `
+				-RemoteRoutingAddress $rrmail `
+				-DisplayName $name `
+				-Alias $user `
+				-OnPremisesOrganizationalUnit $orgu `
+				-UserPrincipalName $upn `
+				-Password $secpw `
+				>$null
+
+	Write-Host "`nConfiguring remote mailbox ..."
+
+	Start-Sleep 3
+
+	Get-Recipient $user | Set-RemoteMailbox	-EmailAddresses @{Add=$rrmail} `
+						-EmailAddressPolicyEnabled $false
+
+	Set-ADUser $user -Replace @{ msExchRecipientTypeDetails = "34359738368" }
+	Set-ADUser $user -Replace @{ info = $tt }
+	Set-ADUser $user -Manager $umgr
+	Disable-ADAccount $user
+
+	"RBI-DL O365 Exchange Data Loss Prevention PCI DSS Policy" | Add-ADGroupMember -Members $user
+	"RBI-DL O365 DLP" | Add-ADGroupMember -Members $user
+
+	########## Calculated group attributes (modify only if required!)
+
+	$gou	= "b2b.regn.net/Groups/Universal/RBI-UK/Security Groups"
+	$gname	= "rsg-mbx-"+$mail
+	$galia	= $gname.Replace("@","-at-")
+	$gprim	= $galia+"@reedelsevier.com"
+
+	########## Create mail-enabled security group
+
+	Write-Host "`nCreating access group ..."
+
+	New-DistributionGroup	`
+			-Name $gname `
+			-DisplayName $gname `
+			-SamAccountName $gname `
+			-Alias $galia `
+			-OrganizationalUnit $gou `
+			-PrimarySmtpAddress $gprim `
+			>$null
+
+	Write-Host "`nConfiguring access group ..."
+	Start-Sleep 20
+
+	Get-DistributionGroup $gname | Add-DistributionGroupMember -Member $umgr
+
+	Get-DistributionGroup $gname | Set-DistributionGroup	-EmailAddressPolicyEnabled $false `
+								-HiddenFromAddressListsEnabled $true `
+								-RequireSenderAuthenticationEnabled $true `
+								-Memberdepartrestriction closed
+
+	Set-ADGroup $gname -Clear Managedby -Replace @{ info = $tt } -GroupCategory Security
+
+	Write-Host "`n -> Mailbox $displ done!"
+
+}
+
+Write-Host "`nAll done!`n"

@@ -1,0 +1,13 @@
+Get-Mailbox -resultsize unlimited -Filter "RecipientTypeDetails -eq 'SharedMailbox'" | Where { $_.PrimarySmtpAddress -like '*@flightglobal.com' } |
+         Export-Csv c:\flightglobalmailboxList.csv -NoTypeInformation
+ 
+ 
+This exports all info about the mailbox, might be worth adding  | select displayname, primarysmtpaddress etc
+ 
+Takes about 5 mins
+
+
+ 
+Get-Mailbox where { $_.Emailaddresses -like 'sarah.griff*' } |
+         Export-Csv c:\flightglobalmailboxList.csv -NoTypeInformation
+[PS] C:\>Get-RemoteMailbox -ResultSize unlimited | Where-Object {$_.primarysmtpaddress -like '*@rbi.co.uk'} | select name, primarysmtpaddress |export-csv c:\users\a-burnettc\documents\rbi.co.uk.csv

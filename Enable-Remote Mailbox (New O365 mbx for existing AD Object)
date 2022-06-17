@@ -1,0 +1,11 @@
+RUN IN Exchange ON-PREM Shell
+
+#RISK.REGN.NET
+
+$user = "AlbeAl01"
+$mail = "alvin.alberto@lexisnexisrisk.com"
+$rrmail = "O365ris-"+$user+"@reedelsevier.mail.onmicrosoft.com"
+
+Enable-RemoteMailbox -identity $user -PrimarySmtpAddress $mail -RemoteRoutingAddress $rrmail
+Start-Sleep 5
+Set-RemoteMailbox -identity $user -EmailAddresses @{Add=$rrmail} -EmailAddressPolicyEnabled $false

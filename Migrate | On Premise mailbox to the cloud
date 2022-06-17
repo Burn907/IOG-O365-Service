@@ -1,0 +1,50 @@
+	1. Add an o365rbius-alias@reedelsevier.mail.onmicrosoft.com email address to the on premises mailbox
+ 
+	2. Connect to Office 365 powershell
+ 
+	3. Store your b2b on premises account credentials;-
+$B2BCred = Get-Credential a-griffins@b2b.regn.net
+ 
+Run the following (changing RBUK/RBUS hybrid details depending on source server - rbiuko365.rbinet.co.uk )
+ 
+	4. new-moverequest  -identity  O365rbius-alias@reedelsevier.mail.onmicrosoft.com -remotehostname rbiuso365.reedbusiness.com  -remotecredential $B2BCred -targetdeliverydomain 'reedelsevier.mail.onmicrosoft.com' -BadItemLimit 50
+
+
+
+Check progress in O365 Powershell:
+ 
+Get-moverequeststatistics mailboxalias
+ 
+	5. ******ADD license if a user mailbox******
+******set type to Share and limit storage is shared mailbox*****
+****Confirm permissions and SMTP address ok**********
+ 
+
+
+Just left it and it completed in the end, took an hour to move 48 items
+ 
+E2K3 to the Cloud - mailbox goes offline during move
+E2010 to the cloud - mailbox is still usable during move
+ 
+Remove-moverequest   -identity xxxxxxx             cancels the move
+ 
+ 
+ 
+ 
+ 
+Ensure this smtp address is added on the mailbox  first 
+o365rbius-UserName@reedelsevier.mail.onmicrosoft.com   or
+o365rbiuk-UserName@reedelsevier.mail.onmicrosoft.com
+ 
+ 
+ 
+new-moverequest -remote -identity  o365rbius-UserName@reedelsevier.mail.onmicrosoft.com -remotehostname rbiuko365.rbinet.co.uk -remotecredential $B2BCred -targetdeliverydomain 'reedelsevier.mail.onmicrosoft.com' -BadItemLimit 50
+ 
+If on US cluster  use this rbiuso365.reedbusiness.com as it's the nearest hybrid
+ 
+ 
+new-moverequest -remote -identity  o365rbius-UserName@reedelsevier.mail.onmicrosoft.com -remotehostname rbiuko365.rbinet.co.uk -remotecredential $B2BCred -targetdeliverydomain 'reedelsevier.mail.onmicrosoft.com' -BadItemLimit 50
+ 
+
+
+

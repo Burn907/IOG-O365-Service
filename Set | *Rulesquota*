@@ -1,0 +1,10 @@
+get-mailbox -identity <mailbox> | fl *rulesquota*
+ 
+PS C:\Users\burnettc> set-mailbox -identity powells@b2b.regn.net -RulesQuota 256kb
+PS C:\Users\burnettc> get-mailbox -identity powells@b2b.regn.net |fl *rulesquota*
+ 
+ 
+RulesQuota : 256 KB (262,144 bytes)
+ 
+ 
+http://community.office365.com/en-us/w/exchange/2490.aspx

@@ -1,0 +1,19 @@
+n o365 Shell use:
+ 
+Get-mobiledevicestatistics -mailbox burnettc
+ 
+ 
+ 
+For bulk users:
+ 
+Create a csv file with first cell as name followed by their b2b username
+ 
+ 
+	1. $batch=import-csv C:\AS.csv
+	2. $batch (to check users have imported)
+	3.  
+ 
+ 
+ 
+https://www.simple-talk.com/sysadmin/exchange/identifying-exchange-activesync-users-with-powershell/
+

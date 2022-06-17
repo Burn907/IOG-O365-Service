@@ -1,0 +1,28 @@
+##############################################################################################
+#
+# Script to create remote mailbox for existing AD user
+#
+##############################################################################################
+
+# Values to provide (create AD user object first):
+
+$user	= "SVC-Analyze-Govern-Dev"
+$mail	= "svc_analyze_govern_dev@lexisnexisrisk.com"
+
+
+
+###############################################################################
+
+# Create O365 mailbox for this AD user
+
+$rrmail	= "O365rbiuk-"+$user+"@reedelsevier.mail.onmicrosoft.com"
+
+write-host $user,$mail,$rrmail
+
+	Enable-RemoteMailbox -identity $user -PrimarySmtpAddress $mail -RemoteRoutingAddress $rrmail
+
+Start-Sleep 5
+
+	Set-RemoteMailbox -identity $user -EmailAddresses @{Add=$rrmail} -EmailAddressPolicyEnabled $false
+
+

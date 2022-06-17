@@ -1,0 +1,71 @@
+Create a Contact
+Create Bulk Contacts
+Import-CSV C:\AIContacts.csv | ForEach-Object{New-MailContact -ExternalEmailAddress $_.Email -Name $_.Name -OrganizationalUnit $_.OUpath}
+Import-CSV C:\AIContacts.csv | ForEach-Object{New-MailContact -ExternalEmailAddress $_.Email -Name $_.Name -Alias $_.Alias -OrganizationalUnit  "b2b.regn.net/User Accounts/Users/RBI-UK/SMTP Recipients/Buyerzone"}
+ 
+ 
+Slightly more sophisticated method (added by Martin):
+Contacts are advised to be created like this:
+  
+Get-MailContact bclarke@sstsoftware.com | fl displ*,name,primary*,alias,hid*
+ 
+ 
+DisplayName                   : bclarke@sstsoftware.com
+Name                          : bclarke@sstsoftware.com
+PrimarySmtpAddress            : bclarke@sstsoftware.com
+Alias                         : bclarke-at-sstsoftware.com
+HiddenFromAddressListsEnabled : True
+ 
+	• When name/display name matches the email address it's easier to see it's an external address vs an internal address/mailbox
+	• With alias near identical to email address it's easier to see and check the forwards
+	• Hidden from the address book
+ 
+	a. The creation script itself
+#############################################################################################
+#
+# Script
+# Run in EMS/on premise
+#
+# Script reads addresses from file and creates contact objects if applicable
+#
+#############################################################################################
+ 
+$inputfile = "sst-20180620.csv"
+ 
+$addrs         = import-csv $inputfile
+ 
+$orgu        = "b2b.regn.net/User Accounts/Service/RBI-UK/SMTP Recipients/SST"
+ 
+Foreach ( $addr in $addrs ) {
+ 
+$nname  = $addr.email.ToLower()
+$ext    = $nname
+$alias  = $ext.replace("@","-at-")
+ 
+If ($ext -ne $null) {
+ 
+New-MailContact -Name $nname `
+-ExternalEmailAddress $ext `
+-OrganizationalUnit $orgu `
+-Alias $alias `
+#                        -whatif
+ 
+Start-Sleep 5
+ 
+Set-MailContact $nname `
+-EmailAddressPolicyEnabled $false `
+-HiddenFromAddressListsEnabled $true `
+#                        -whatif
+   
+}
+}
+ 
+	b. The inputfile (sample):
+ 
+Last,First,Email
+ JAkin@sstsoftware.com
+ KAppleford@sstsoftware.com
+ SAsrat@sstsoftware.com
+ BBaker@sstsoftware.com
+ WBaker@sstsoftware.com
+ BBalcer@sstsoftware.com

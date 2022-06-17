@@ -1,0 +1,8 @@
+Add-MailboxPermission <mailbox> -User <user or security group> -AccessRights FullAccess -Automapping $false
+ 
+ 
+PS C:\Users\griffins1> Add-MailboxPermission globalservicedesk@rbi.co.uk -user griffins1 -AccessRights fullaccess -AutoMapping $false
+ 
+Identity             User                 AccessRights                                                IsInherited Deny
+--------             ----                 ------------                                                ----------- ----
+RBI Technology Se... NAMPRD08\griff547... {FullAccess}                                                False       False

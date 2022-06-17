@@ -1,0 +1,35 @@
+get-mailbox -resultsize unlimited | select DisplayName, primarysmtpaddress, recipienttypedetails | export-csv c:\test.csv -notypeinformation
+ 
+Takes about 10 mins to run on all the O365 mailbox
+ 
+ 
+Get mailboxes for all users in b2b domain
+ 
+Get-Mailbox -ResultSize unlimited | where {$_.userprincipalname -like '*@b2b.regn.net'} | export-csv c:\b2bregn.csv
+ 
+ 
+ 
+ 
+get-mailbox -OrganizationalUnit "ou=Departed,ou=Staff,dc=COMPANY,dc=local" -resultsize unlimited |
+  get-mailboxstatistics | ft DisplayName,TotalItemSize,Itemcount
+ 
+get-mailbox -resultsize unlimited -filter "userprincipalname -like '*@b2b.regn.net'" | get-mailboxstatistics | select displayname, totalitems, totalitemsize | export-csv c:\myfile.csv
+ 
+ 
+Takes a minute or two:, faster than "Where" command, doesn't work on email address:-
+ 
+ get-mailbox -resultsize unlimited -filter {DisplayName -like 'smith*'} | export-csv c:\filtertestsmith1.csv
+ 
+For email address need to use:-
+get-mailbox -resultsize unlimited | where {$_.PrimarySMTPAddress -like '*@nrs-inc.com'} | export-csv c:\filenrsinc.csv
+ 
+ 
+O365 mailbox report with smtp and aliases for B2B users:
+Get-Mailbox -ResultSize unlimited | where {$_.userprincipalname -like '*@b2b.regn.net'} |select DisplayName, primarysmtpaddress, recipienttypedetails | export-csv C:\Users\burnettc\Documents\b2bregn.csv
+ 
+ 
+ 
+ 
+Licenses - b2b
+ 
+ get-MSOLUser -All | where {$_.userprincipalname -like '*@b2b.regn.net'} |select userprincipalname,DisplayName,islicensed,{$_.Licenses.AccountSkuId}| Export-CSV c:\users\burnettc\documents\o365newlicenses.csv -NoTypeInformation

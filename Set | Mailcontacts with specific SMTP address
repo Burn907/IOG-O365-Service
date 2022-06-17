@@ -1,0 +1,3 @@
+get-mailuser -Filter {Emailaddresses -like "*@mendeley.com"} | Set-MailUser -MaxSendSize Unlimited -EmailAddressPolicyEnabled $false
+ 
+From <https://reedelsevier.service-now.com/incident.do?sys_id=2ae980990cd4a98096d28aa6a7cc458e&sysparm_nostack=true&sysparm_view=> 

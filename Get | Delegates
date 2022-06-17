@@ -1,0 +1,11 @@
+	• Get-Mailbox Identity davidlos | ft GrantSendOnBehalfTo
+	• Get-MailboxFolderPermission –Identity abc@abc.com:\calendar
+ 
+Check both
+ 
+This will show delegates
+get-mailbox Bas.Dijkhuizen@reedbusiness.nl | Get-CalendarProcessing | fl 
+
+
+
+

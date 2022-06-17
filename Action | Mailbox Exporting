@@ -1,0 +1,34 @@
+To Export Mailboxes to PST's - the mailboxes will need to be moved from O365 back to On-Prem Exchange 2010
+The new-mailboxexportrequest can only be run in exchange shell under you’re a-account which has the import-export group rule applied See Migrate | From O365 to Exchange 2010
+ 
+ 
+Export mailbox in bulk to pst
+$AIMailbox = Import-csv c:\Approvedindexuserlist.csv
+$AIMailbox | % { New-MailboxExportRequest -Mailbox $_.email -FilePath \\qhsl24323\AIdivestmentpst\$_.pst}
+ $AIMailbox = Import-csv c:\Approvedindexuserlist.csv
+ 
+------------------------------------------------------------------------------------------------------------------
+Using filters
+New-MailboxExportRequest -ContentFilter {(Received -lt '04/01/2010') -and (Received -gt '03/01/2010')} -Mailbox "Pelton" -Name DPeltonExp -FilePath \\ExServer1\Imports\DPelton.pst
+ 
+ 
+--------------------------------------------------------------------------------------------------------------------------
+Individual export
+New-mailboxExportRequest -mailbox sarah@rbi.co.uk -filepath \\qhs124751\export\pstname.pst
+ 
+Monitor export
+Get-mailboxexportrequest -status inprogress
+Get-mailboxexportrequest -mailbox Alias
+Get-mailboxexportrequest -status queued
+ 
+Suspend 
+Suspend-MailboxExportRequest -Identity griffins1
+ 
+Resume
+Resume-MailboxExportRequest -Identitygriffins1
+ 
+This example resumes all mailbox export requests that have a status of Failed.
+Get-MailboxExportRequest -Status Failed | Resume-MailboxExportRequest
+ 
+Remove a request (partial or completed - this doesn't remove the pst)
+Remove-MailboxExportRequest -Identity  MAILBOXALIAS

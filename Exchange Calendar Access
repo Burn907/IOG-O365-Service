@@ -1,0 +1,12 @@
+#Check current permissions on calendar folder
+Get-MailboxFolderPermission -Identity "evansm5:\calendar" 
+ 
+#Granting permissions on calendar folder:
+Add-MailboxFolderPermission -Identity "evansm5:\calendar" -AccessRights editor -User kwame.kusi@reedbusiness.com
+
+
+#Grant read (reviewer) permissions on calendar folder:
+Add-MailboxFolderPermission -Identity firstname.surname@lexisnexisrisk.com:\Calendar -User firstname.surname@lexisnexisrisk.com -AccessRights reviewer 
+
+ #Remove access on calendar
+Remove-MailboxFolderPermission -Identity firstname.surname@lexisnexisrisk.com:\Calendar -User firstname.surname@lexisnexisrisk.com

@@ -1,0 +1,4 @@
+Get-MessageTrace -SenderAddress brien.gately@accuity.com -StartDate "02/09/2016 10:25" -EndDate "02/10/2016 10:28" | select *address,*subject,status,size
+This cmd creates an in-place eDiscovery search which ends up showing in the GUI. Use this to be granular on search results
+New-MailboxSearch -Name "Spamcheck" -SourceMailboxes craig.burnett@rbi.co.uk -TargetMailbox emailspamanalysis@reedbusiness.com -StartDate "02/15/2016" -EndDate "02/17/2016" -SearchQuery "transaction invoice payment hasattachments:true" 
+https://technet.microsoft.com/en-us/library/dd298064%28v=exchg.160%29.aspx

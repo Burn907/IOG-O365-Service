@@ -1,0 +1,2 @@
+In O365 Shell make sure you import-module ActiveDirectory
+Get-ADGroupMember "RBI-GLO DL TECH Infrastructure & Operations Group" -Recursive | Export-Csv

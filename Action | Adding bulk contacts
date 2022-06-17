@@ -1,0 +1,20 @@
+Save the forward CSV import file to your C drive. As the mailboxes are in O365 the scripts will need to be run in O365 PowerShell :-
+ 
+First import the data from the csv file:-
+ 
+$BatchName= Import-csv c:\CMDForwardsCanadaBurnaby11Nov.csv 
+ 
+Then run the following to double check the csv data has been loaded correctly:-
+ 
+$Batchname
+ 
+Then set the forwards (store and forward):-
+ 
+$BatchName | foreach {Set-Mailbox $_.username -DeliverToMailboxAndForward $true -ForwardingAddress $_.Contact}
+ 
+Then run this to check them:-
+$BatchName | foreach {get-Mailbox $_.username | Select Name, PrimarySMTPAddress, ForwardingAddress, DeliverToMailboxAndForward}
+ 
+
+
+

@@ -1,0 +1,20 @@
+ONPREMISES:-
+ 
+Get-distributiongroup -organisationalunit "b2b.regn.net/Groups/Universal/RBI-US | select displayname,accerpmessagesonlyfromsendersormembers | fl | export-csv c:\file.csv
+ 
+ 
+Can also use accept*
+Name                                   : All Staff
+ AcceptMessagesOnlyFrom                 : {exchangeserverpro.net/Company/Users/Branch Office/Aisha.Bhari}
+ AcceptMessagesOnlyFromDLMembers        : {}
+ AcceptMessagesOnlyFromSendersOrMembers : {exchangeserverpro.net/Company/Users/Branch Office/Aisha.Bhari}
+Ihttp://exchangeserverpro.com/exchange-2010-report-authorized-send-distribution-list
+ 
+ 
+[PS] C:\>Get-DistributionGroup | where {$_.AcceptMessagesOnlyFromSendersOrMembers -ne $null} | fl name,acceptmessagesonlyfromsendersormembers
+Name                                   : All Staff
+ AcceptMessagesOnlyFromSendersOrMembers : {exchangeserverpro.net/Company/Users/Branch Office/Aisha.Bhari, exchangeserver
+                                          pro.net/Company/Groups/Administration Team}
+Name                                   : Executives
+ AcceptMessagesOnlyFromSendersOrMembers : {exchangeserverpro.net/Company/Groups/Administration Team}
+

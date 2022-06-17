@@ -1,0 +1,7 @@
+Import-Module ActiveDirectory 
+Import-Csv -Path “C:\Temp\Users-To-Add.csv” | ForEach-Object {Add-ADGroupMember -Identity “Group-Name” -Members $_.’User-Name’}
+
+
+EXAMPLE:
+
+ Import-Csv C:\output\Groupmembers.csv | ForEach-Object {Add-ADGroupMember -Identity "RBI-O365 Conditional Access Policy" -Members $_.samaccountname} 

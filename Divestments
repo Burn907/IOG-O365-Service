@@ -1,0 +1,10 @@
+Offboarding
+$AIMailbox = Import-csv c:\Approvedindexuserlist.csv
+ 
+$AIMailbox | New-MoveRequest -outbound -identity $_.alias -remotehostname rbiuko365.rbinet.co.uk -targetdeliverydomain rbi.co.uk -remotecredential $AdminCred -remotetargetdatabase "RBIQHSMBX02-TEMP"
+ 
+Configure Mail Forwarding for a Mailbox (no simple way to do this for multi users, will need to do this per mailbox)
+Set-Mailbox -Identity "Alias" -ForwardingAddress "danpark.parents@fineartschool.net" -DeliverToMailboxAndForward $true
+ 
+Export multiple Mailboxes to PST
+$AIMailbox | New-MailboxExportRequest -Mailbox $_.Alias –FilePath \\SERVER01\PSTFileShare\Alias_Export.pst (PSTFileShare must be a share on your desktop)

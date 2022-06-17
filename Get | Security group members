@@ -1,0 +1,14 @@
+“Import-Module ActiveDirectory”
+ 
+After you import the AD module type the following changing the identity to reflect your group name and the path to export group members to a csv file in that directory:
+ 
+Get-ADGroupMember -identity “Name of Group” | select name | Export-csv -path C:\Output\Groupmembers.csv -NoTypeInformation
+ 
+You should now have a list of members by display name in a csv file located at C:\Output\Groupmembers.csv. If you wanted to list out the users by samaccountname you could just change out “name” after the select statement with “samaccountname”.
+ 
+ 
+Now lets say you are using nested groups. You will notice that your list will reflect the nested group name and no the members of the nested group. All you need to do in this case is add the -recursive parameter to enumerate all the nested group members and add them to the list. This would look as follows:
+ 
+Get-ADGroupMember -identity “Name of Group” -recursive | select name | Export-csv -path C:\Output\Groupmembers.csv -NoTypeInformation
+ 
+From <http://pipe2text.com/?page_id=1218> 

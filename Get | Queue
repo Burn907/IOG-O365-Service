@@ -1,0 +1,6 @@
+Get-MessageTrace -Status pending       See all pending messages
+ 
+ 
+Get-RemovedMailbox  (see mailboxes with licenses removed if not showing in the GUI)
+ 
+Get-transportserver Rb* | get-queue   change to BIN* to check US

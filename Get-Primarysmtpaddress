@@ -1,0 +1,1 @@
+$batch | foreach {Get-Mailbox $_.name -ResultSize unlimited | select name, primarysmtpaddress} | Export-Csv c:\users\burnettc\desktop\marnusexport.csv

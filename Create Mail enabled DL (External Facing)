@@ -1,0 +1,16 @@
+Create a Universal Distribution group in XXXXX in AD
+
+Next you need to mail enable it:
+
+Enable-DistributionGroup -Identity "rbi-uk dl cirium turbulence aware"
+{This sets the default mail address of "name@reedelsevier..com
+
+Next you need to make enable ability to accept emails from the internet which is not on by default
+
+Set-DistributionGroup -Identity "rbi-uk dl cirium turb*" -RequireSenderAuthenticationEnabled $false
+
+Now you can update the primary smtp address
+
+Set-DistributionGroup -Identity "rbi-uk dl cirium turb*" -PrimarySmtpAddress Support-turbulence@cirium.com -emailaddresspolicyenabled $false
+
+Now you can add members in the AD object in AD. If it is a contact card for an external address, you must select this in the AD filters
